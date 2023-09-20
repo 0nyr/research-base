@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 
-from commons.params.app_params import AppName # for abstract classes
-
-from commons.utils.utils import DATETIME_FORMAT, check_and_create_directory, datetime2str
+from ..utils.utils import DATETIME_FORMAT, check_and_create_directory, datetime2str
 
 import dotenv
 import os
@@ -18,10 +16,8 @@ class BaseProgramParams(ABC):
     This is a base class that contains the common parameters for all programs,
     like loggers, automatic path checking, etc.
     """
-    app_name: AppName
+    app_name: str
 
-    
-    
     ### env vars
     # NOTE: all None values NEED to be overwritten by the .env file
     
@@ -41,7 +37,7 @@ class BaseProgramParams(ABC):
 
     def __init__(
             self, 
-            app_name: AppName,
+            app_name: str,
             load_program_argv : bool = True, 
             debug : bool = False,
             dotenv_path: str = None,
@@ -207,11 +203,15 @@ class BaseProgramParams(ABC):
     def __parse_program_argv(self):
         """
         Parse program arguments.
-        WARN: Do NOT parse program argv if running under pytest.
+        WARN: Do NOT parse program argv if running under pytest. 
+        You can try, but it will fail. This is because argv will try to interpret 
+        pytest arguments as program arguments, and give an unknown argument error.
         """
         if not self.__is_running_under_pytest():
             self._load_program_argv()
             self._consume_program_argv()
+        else:
+            self.cli_args = None # needed to avoid pytest error
     
     @abstractmethod # to implement in child
     def _load_program_argv(self):
@@ -242,8 +242,8 @@ class BaseProgramParams(ABC):
         self.COMMON_LOGGER.setLevel(logging.DEBUG)
 
         # add RotatingFileHandler to common logger
-        check_and_create_directory(self.COMMON_LOGGER_DIR_PATH + self.app_name.value)
-        common_log_file_path = self.COMMON_LOGGER_DIR_PATH + self.app_name.value + "/common_log.log"
+        check_and_create_directory(self.COMMON_LOGGER_DIR_PATH + self.app_name)
+        common_log_file_path = self.COMMON_LOGGER_DIR_PATH + self.app_name + "/common_log.log"
         common_log_file_handler = RotatingFileHandler(
             common_log_file_path, maxBytes=50000000, backupCount=5
         )
@@ -265,8 +265,8 @@ class BaseProgramParams(ABC):
         # Result logger using file handler
         if self.SAVE_RESULT_LOGS:
             # when using results logger, do:
-            check_and_create_directory(self.RESULTS_LOGGER_DIR_PATH + self.app_name.value)
-            results_log_file_path = self.RESULTS_LOGGER_DIR_PATH + self.app_name.value + "/" + datetime2str(datetime.now()) + "_results.log"
+            check_and_create_directory(self.RESULTS_LOGGER_DIR_PATH + self.app_name)
+            results_log_file_path = self.RESULTS_LOGGER_DIR_PATH + self.app_name + "/" + datetime2str(datetime.now()) + "_results.log"
         
             # inform user of the results logger path
             self.COMMON_LOGGER.info("⚓ Results logger path: %s" % results_log_file_path) 
