@@ -7,3 +7,5 @@ This python library is a framework for programs that should include all the basi
 `nix develop`: start the nix dev environment. 
 
 `pytest src/tests/`: run all tests. Add flag `-s` for displaying captured logs.
+
+`nix build .#devShells.x86_64-linux`: build ?
