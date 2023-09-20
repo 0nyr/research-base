@@ -49,6 +49,9 @@
             license = licenses.mit;
           };
         };
+
+        # Add this line to specify a default package
+        defaultPackage.${system} = self.packages.${system}.research-base;
       }
     );
 }
