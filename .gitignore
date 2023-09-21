@@ -3,5 +3,8 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 
+# test output
+test_output/
+
 # Ignore the 'result' symlink created by Nix
 result
