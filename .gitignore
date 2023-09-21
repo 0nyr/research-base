@@ -1,6 +1,7 @@
 # python gitignore
 __pycache__/
 .pytest_cache/
+*.egg-info/
 
 # Ignore the 'result' symlink created by Nix
 result

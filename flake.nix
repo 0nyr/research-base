@@ -16,6 +16,7 @@
       src = ./.;
 
       nativeBuildInputs = with pkgs; [
+        pythonPackages.pip
         pythonPackages.setuptools
         pythonPackages.pytest
       ];

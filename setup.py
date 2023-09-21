@@ -7,7 +7,6 @@ setup(
     package_dir={'': 'src'},
     install_requires=[
         # dependencies
-        'python-dotenv',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
