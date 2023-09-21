@@ -30,7 +30,7 @@ class BaseResultWriter(object):
             self, 
             csv_file_path: str, 
             more_header: list[str],
-            pipeline_name: Enum,
+            pipeline_name: str,
         ):
         self.csv_file_path = csv_file_path
         self.headers = self.BASE_HEADERS + more_header
@@ -40,7 +40,7 @@ class BaseResultWriter(object):
         self.__already_written_results = False
 
         # initialization
-        self.set_result("pipeline_name", pipeline_name.value)
+        self.set_result("pipeline_name", pipeline_name)
 
     def set_result(self, field: str, value: Optional[str]) -> None:
         if field in self.results:

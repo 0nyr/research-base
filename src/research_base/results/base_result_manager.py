@@ -30,7 +30,7 @@ class BaseResultsManager(Generic[PipelineNamesEnum, ResultWriter]):
         self.result_writer_dict = {}
         for pipeline_name in pipeline_names:
             self.result_writer_dict[pipeline_name] = ResultWriterType(
-                pipeline_name,
+                str(pipeline_name),
             )
     
     def set_result_forall(
