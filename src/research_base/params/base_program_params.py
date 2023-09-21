@@ -1,4 +1,9 @@
 from abc import ABC, abstractmethod
+from enum import Enum
+from typing import Generic, Type, TypeVar
+
+from research_base.results.base_result_manager import BaseResultsManager
+from research_base.results.base_result_writer import BaseResultWriter
 
 from ..utils.utils import DATETIME_FORMAT, check_and_create_directory, datetime2str
 
@@ -9,14 +14,19 @@ import logging
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
 
+ResultWriter = TypeVar('ResultWriter', bound=BaseResultWriter)  # CustomResultWriter should be a subtype of BaseResultWriter
+PipelineNamesEnum = TypeVar('PipelineNamesEnum', bound=Enum)  # PipelineNamesEnum should be a subtype of Enum
 
-class BaseProgramParams(ABC):
+class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
     """
     Program parameters.
     This is a base class that contains the common parameters for all programs,
     like loggers, automatic path checking, etc.
     """
     app_name: str
+
+
+    results_manager: BaseResultsManager[PipelineNamesEnum, ResultWriter]
 
     ### env vars
     # NOTE: all None values NEED to be overwritten by the .env file
@@ -38,6 +48,8 @@ class BaseProgramParams(ABC):
     def __init__(
             self, 
             app_name: str,
+            pipeline_names_enum: Type[Enum],
+            result_writer: Type[BaseResultWriter],
             load_program_argv : bool = True, 
             debug : bool = False,
             dotenv_path: str = None,
@@ -54,10 +66,18 @@ class BaseProgramParams(ABC):
 
         debug and generate_important_log_file parameter is used 
         only if load_program_argv is True.
+
+        :param app_name: the name of the application
+        :param pipeline_names_enum: the enum containing the names of the pipelines
+        :param result_writer: the result writer class
+        :param load_program_argv: whether to load program arguments from argv
+        :param debug: whether to run in debug mode
+        :param dotenv_path: the path to the .env file
         """
         self.app_name = app_name
 
         self.__init_default_values()
+        
 
         if load_program_argv:
             self.__parse_program_argv()
@@ -70,7 +90,10 @@ class BaseProgramParams(ABC):
 
         self.__construct_log()
 
-    
+        self.__init_results_manager(pipeline_names_enum, result_writer)
+
+# ---------------------- initialise the values ----------------------
+
     def __init_default_values(self):
         """
         Init values as instance variables.
@@ -81,7 +104,40 @@ class BaseProgramParams(ABC):
         self.RESULTS_LOGGER = logging.getLogger("results_logger")
 
         self.data_origins_testing = None
+
+
+# ---------------------- results manager ----------------------
+    def __init_results_manager(self, pipeline_names_enum: Type[Enum], result_writer: Type[BaseResultWriter]):
+        """
+        Init the results manager.
+        """
+        self.results_manager = BaseResultsManager[pipeline_names_enum, result_writer](
+            pipeline_names_enum, result_writer
+        )
+
+        self.set_result_forall(
+            "random_seed",
+            str(self.RANDOM_SEED)
+        )
+
+    def save_results_to_csv(self, pipeline_name: PipelineNamesEnum):
+        """
+        Save results to CSV files.
+        """
+        self.results_manager.save_results_for(pipeline_name)
     
+    def set_result_for(self, pipeline_name: PipelineNamesEnum, column_name: str, value: str):
+        """
+        Set a result for a given pipeline.
+        """
+        self.results_manager.set_result_for(pipeline_name, column_name, value)
+
+    def set_result_forall(self, column_name: str, value: str):
+        """
+        Set a result for all pipelines.
+        """
+        self.results_manager.set_result_forall(column_name, value)
+# ---------------------- environnement loading ----------------------
 
     def __get_all_class_attribute_annotations(self):
         """
@@ -173,33 +229,9 @@ class BaseProgramParams(ABC):
         print("✅ Environment variables loaded.")
 
 
-    def __is_running_under_pytest(self):
-        """
-        Check whether the code is running under pytest.
-        """
-        return 'pytest' in sys.modules
-
-    def __check_all_paths(self):
-        """
-        Check if all paths are valid.
-        """
-        # get all parameters that are potentially paths
-        __paths_vars_to_check = []
-        for name, value in vars(self).items():
-            if "PATH" in name:
-                __paths_vars_to_check.append(name)
-
-        # check if all paths exist
-        for path_var_name in __paths_vars_to_check:
-            path = getattr(self, path_var_name)
-            if not os.path.exists(path):
-                print("Program paths are NOT OK. Error in var: %s" % path_var_name)
-                print("%s: %s" % (path_var_name, path))
-                exit(1)
-        
-        print("✅ Program paths are OK.")
             
-    
+# ---------------------- program arg ----------------------
+
     def __parse_program_argv(self):
         """
         Parse program arguments.
@@ -226,6 +258,8 @@ class BaseProgramParams(ABC):
         Consume given program arguments.
         """
         pass
+
+# ---------------------- log ----------------------
 
     def __construct_log(self):
         """
@@ -302,3 +336,30 @@ class BaseProgramParams(ABC):
         self.RESULTS_LOGGER.info("########## Program params:   [see above] ##########")
 
 
+# ---------------------- helper ----------------------
+
+    def __is_running_under_pytest(self):
+        """
+        Check whether the code is running under pytest.
+        """
+        return 'pytest' in sys.modules
+
+    def __check_all_paths(self):
+        """
+        Check if all paths are valid.
+        """
+        # get all parameters that are potentially paths
+        __paths_vars_to_check = []
+        for name, value in vars(self).items():
+            if "PATH" in name:
+                __paths_vars_to_check.append(name)
+
+        # check if all paths exist
+        for path_var_name in __paths_vars_to_check:
+            path = getattr(self, path_var_name)
+            if not os.path.exists(path):
+                print("Program paths are NOT OK. Error in var: %s" % path_var_name)
+                print("%s: %s" % (path_var_name, path))
+                exit(1)
+        
+        print("✅ Program paths are OK.")

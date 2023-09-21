@@ -1,7 +1,21 @@
+from enum import Enum
 import os
 from research_base.params.base_program_params import BaseProgramParams
+from research_base.results.base_result_writer import BaseResultWriter
 
 from .cli import CLIArguments
+
+class PipelineParams(Enum):
+    PIPELINE1 = "PIPELINE1"
+    PIPELINE2 = "PIPELINE2"
+
+class ResultWriter(BaseResultWriter):
+    def __init__(self, pipeline_name: Enum):
+        super().__init__(
+            csv_file_path="test_output/result.csv", 
+            more_header=[], 
+            pipeline_name=pipeline_name,
+        )
 
 class ProgramParams(BaseProgramParams):
     """
@@ -31,7 +45,7 @@ class ProgramParams(BaseProgramParams):
         print("Found .env file: {0}".format(dotenv_path))
 
 
-        super().__init__("GCN_ML", load_program_argv, debug, dotenv_path=dotenv_path)
+        super().__init__("GCN_ML", PipelineParams, ResultWriter, load_program_argv, debug, dotenv_path=dotenv_path)
 
         # to be done last
         self._log_program_params()

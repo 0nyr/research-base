@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import Optional
-from processing_pipelines.params.pipeline_params import PipelineNames
 from .base_result_writer import BaseResultWriter
 
 from typing import TypeVar, Generic, Type
@@ -11,27 +10,26 @@ PipelineNamesEnum = TypeVar('PipelineNamesEnum', bound=Enum)  # PipelineNamesEnu
 class BaseResultsManager(Generic[PipelineNamesEnum, ResultWriter]):
     """
     Manager of different result writers (one per pipeline).
+    WARN : Only work with ResultWriter subclasses, with only one argument in the constructor: pipeline_name.
     """
     result_writer_dict: dict[PipelineNamesEnum, ResultWriter]
     csv_results_path: str
 
-    def __init__(self, csv_results_path: str, ResultWriterType: Type[BaseResultWriter]):
-        self.csv_results_path = csv_results_path
+    def __init__(self, pipeline_names : Type[Enum], ResultWriterType: Type[BaseResultWriter]):
         
         # result keepers
-        self.__create_results_keepers(ResultWriterType)
+        self.__create_results_keepers(pipeline_names, ResultWriterType)
     
     def __repr__(self):
         return f"ResultsManager instance of type: {type(self).__name__}"
 
-    def __create_results_keepers(self, ResultWriterType: Type[BaseResultWriter]):
+    def __create_results_keepers(self, pipeline_names : Type[Enum], ResultWriterType: Type[BaseResultWriter]):
         """
         Create results keepers.
         """
         self.result_writer_dict = {}
-        for pipeline_name in PipelineNames:
+        for pipeline_name in pipeline_names:
             self.result_writer_dict[pipeline_name] = ResultWriterType(
-                self.csv_results_path,
                 pipeline_name,
             )
     

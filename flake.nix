@@ -23,6 +23,7 @@
 
       propagatedBuildInputs = with pythonPackages; [
         python-dotenv
+        psutil
       ];
 
       meta = with pkgs.lib; {

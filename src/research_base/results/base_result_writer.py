@@ -6,8 +6,6 @@ import platform
 import psutil
 from typing import Optional
 
-from commons.utils.utils import datetime2str
-
 
 class BaseResultWriter(object):
     """
@@ -43,9 +41,6 @@ class BaseResultWriter(object):
 
         # initialization
         self.set_result("pipeline_name", pipeline_name.value)
-
-        # start time
-        self.set_result("start_time", datetime2str(datetime.now()))
 
     def set_result(self, field: str, value: Optional[str]) -> None:
         if field in self.results:
