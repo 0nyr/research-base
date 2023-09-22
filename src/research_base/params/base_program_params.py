@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-import inspect
 from typing import Generic, Type, TypeVar
 
 from research_base.results.base_result_manager import BaseResultsManager
@@ -195,14 +194,19 @@ class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
             # determine project .env file, using the subclass python file location
             # and check recursively in parent directories for the first encountered .env file
 
-            # python magic to get the path of the subclass python file
+            #  -------------------      python magic to get the path of the subclass python file- -------------------
 
             # 0 represents this line, 1 represents line at caller (init of this class), so the 3 represents the caller of the caller of the init of this class
-            frame = inspect.stack()[3] 
-            module = inspect.getmodule(frame[0])
-            subclass_path = module.__file__
+            #import inspect
+            #frame = inspect.stack()[3] 
+            #module = inspect.getmodule(frame[0])
+            #subclass_path = module.__file__
 
-            tmp_folder = os.path.dirname(os.path.abspath(subclass_path))
+            # WARN : this not relialable, use the dotenv path instead
+            # ------------------------------------------------------------
+            
+
+            tmp_folder = os.path.dirname(os.path.abspath(__file__))
             project_base_dir = tmp_folder
             while not os.path.exists(tmp_folder + "/.env"):
                 tmp_folder = os.path.dirname(tmp_folder)
