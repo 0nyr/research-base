@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
+import inspect
 from typing import Generic, Type, TypeVar
 
 from research_base.results.base_result_manager import BaseResultsManager
@@ -189,15 +190,24 @@ class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
         Load environment variables from .env file.
         Overwrite default values with values from .env file if they are defined there.
         """
+
         if dotenv_path is None:
-            # determine project .env file, using the current python file location
+            # determine project .env file, using the subclass python file location
             # and check recursively in parent directories for the first encountered .env file
-            tmp_folder = os.path.dirname(os.path.abspath(__file__))
+
+            # python magic to get the path of the subclass python file
+            frame = inspect.stack()[1]
+            module = inspect.getmodule(frame[0])
+            subclass_path = module.__file__
+
+            tmp_folder = os.path.dirname(os.path.abspath(subclass_path))
             while not os.path.exists(tmp_folder + "/.env"):
                 tmp_folder = os.path.dirname(tmp_folder)
                 if tmp_folder == "/":
-                    print("BaseProgramParams ERROR: .env file not found")
-                    exit(1)
+                    print("BaseProgramParams ERROR: .env file not found, falling back to default values.")
+                    dotenv.load_dotenv()
+                    return
+                    
                 project_base_dir = tmp_folder + "/"
 
             # Load environment variables from .env file
