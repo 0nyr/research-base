@@ -38,14 +38,14 @@ class ProgramParams(BaseProgramParams):
     ):
         # determine dotenv path
         # NOTE: the .env file is in the same path as this current file
-        dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-        assert os.path.exists(dotenv_path) and os.path.isfile(dotenv_path), (
-            "ERROR: .env file not found: {0} in folder: {1}".format(dotenv_path, os.path.dirname(__file__))
-        )
-        print("Found .env file: {0}".format(dotenv_path))
+        #dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+        #assert os.path.exists(dotenv_path) and os.path.isfile(dotenv_path), (
+        #    "ERROR: .env file not found: {0} in folder: {1}".format(dotenv_path, os.path.dirname(__file__))
+        #)
+        #print("Found .env file: {0}".format(dotenv_path))
 
 
-        super().__init__("GCN_ML", PipelineParams, ResultWriter, load_program_argv, debug, dotenv_path=dotenv_path)
+        super().__init__("GCN_ML", PipelineParams, ResultWriter, load_program_argv, debug)
 
         # to be done last
         self._log_program_params()

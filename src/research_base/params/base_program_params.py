@@ -196,11 +196,14 @@ class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
             # and check recursively in parent directories for the first encountered .env file
 
             # python magic to get the path of the subclass python file
-            frame = inspect.stack()[1]
+
+            # 0 represents this line, 1 represents line at caller (init of this class), so the 3 represents the caller of the caller of the init of this class
+            frame = inspect.stack()[3] 
             module = inspect.getmodule(frame[0])
             subclass_path = module.__file__
 
             tmp_folder = os.path.dirname(os.path.abspath(subclass_path))
+            project_base_dir = tmp_folder
             while not os.path.exists(tmp_folder + "/.env"):
                 tmp_folder = os.path.dirname(tmp_folder)
                 if tmp_folder == "/":
@@ -208,10 +211,10 @@ class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
                     dotenv.load_dotenv()
                     return
                     
-                project_base_dir = tmp_folder + "/"
+                project_base_dir = tmp_folder
 
             # Load environment variables from .env file
-            dotenv_path = project_base_dir + ".env"
+            dotenv_path = os.path.join(project_base_dir, ".env")
         
         dotenv.load_dotenv(dotenv_path)
 
