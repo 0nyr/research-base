@@ -4,7 +4,7 @@ from typing import Any
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 
-from commons.results.base_result_writer import BaseResultWriter
+from research_base.results.base_result_writer import BaseResultWriter
 from ..results_utils import time_measure_result
 
 def __get_predicted_classes_from_report(clf_report: dict) -> list:
