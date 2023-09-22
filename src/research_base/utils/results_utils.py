@@ -37,9 +37,9 @@ def time_measure_result(
         print(message)
     
     if result_saver is not None and result_column is not None:
-        if type(result_saver) == BaseResultsManager:
+        if isinstance(result_saver, BaseResultsManager):
             result_saver.set_result_forall(result_column, duration_str)
-        elif type(result_saver) == BaseResultWriter:
+        elif isinstance(result_saver, BaseResultWriter):
             result_saver.set_result(result_column, duration_str)
         else:
             raise ValueError(f"Unknown result saver type: {type(result_saver)}")
