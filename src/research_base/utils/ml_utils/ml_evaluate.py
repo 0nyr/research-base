@@ -7,7 +7,7 @@ from sklearn.metrics import confusion_matrix, roc_curve, auc
 from research_base.results.base_result_writer import BaseResultWriter
 from ..results_utils import time_measure_result
 
-def __get_predicted_classes_from_report(clf_report: dict) -> list:
+def __get_predicted_classes_from_report(clf_report: dict):
     """
     Return the classes from the classification report.
     """
@@ -19,7 +19,7 @@ def __get_predicted_classes_from_report(clf_report: dict) -> list:
         # as these are not classes
         if key not in ['accuracy', 'macro avg', 'weighted avg']:
             # Append the class (as an integer) to the classes list
-            classes.append(int(key))
+            classes.append(str(key))
     # Return the classes list
     return classes
 
