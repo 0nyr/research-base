@@ -24,6 +24,7 @@
       propagatedBuildInputs = with pythonPackages; [
         python-dotenv
         psutil
+        numpy
       ];
 
       meta = with pkgs.lib; {

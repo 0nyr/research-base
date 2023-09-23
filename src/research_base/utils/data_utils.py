@@ -1,11 +1,9 @@
 from typing import Tuple
 import numpy as np
 
-def count_positive_and_negative_labels(labels: np.ndarray) -> Tuple[int, int]:
+def count_labels(array: np.ndarray) -> dict:
     """
-    Count the number of positive and negative labels.
+    Count the number of labels in an array and return a dictionary with the counts.
     """
-    nb_positive_labels = np.count_nonzero(labels)
-    nb_negative_labels = len(labels) - nb_positive_labels
-
-    return nb_positive_labels, nb_negative_labels
+    unique, counts = np.unique(array, return_counts=True)
+    return dict(zip(unique, counts))
