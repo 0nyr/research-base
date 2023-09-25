@@ -25,6 +25,7 @@
         python-dotenv
         psutil
         numpy
+        pandas
       ];
 
       meta = with pkgs.lib; {

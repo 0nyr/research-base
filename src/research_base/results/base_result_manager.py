@@ -15,15 +15,17 @@ class BaseResultsManager(Generic[PipelineNamesEnum, ResultWriter]):
     result_writer_dict: dict[PipelineNamesEnum, ResultWriter]
     csv_results_path: str
 
-    def __init__(self, pipeline_names : Type[Enum], ResultWriterType: Type[BaseResultWriter]):
-        
+    def __init__(self, pipeline_names : Type[PipelineNamesEnum], ResultWriterType: Type[ResultWriter]):
+        """
+        WARN : Only work with ResultWriter subclasses, with only one argument in the constructor: pipeline_name.
+        """
         # result keepers
         self.__create_results_keepers(pipeline_names, ResultWriterType)
     
     def __repr__(self):
         return f"ResultsManager instance of type: {type(self).__name__}"
 
-    def __create_results_keepers(self, pipeline_names : Type[Enum], ResultWriterType: Type[BaseResultWriter]):
+    def __create_results_keepers(self, pipeline_names : Type[PipelineNamesEnum], ResultWriterType: Type[ResultWriter]):
         """
         Create results keepers.
         """
@@ -31,7 +33,8 @@ class BaseResultsManager(Generic[PipelineNamesEnum, ResultWriter]):
         for pipeline_name in pipeline_names:
             self.result_writer_dict[pipeline_name] = ResultWriterType(
                 str(pipeline_name),
-            )
+            ) # type: ignore # WARN : Only work with ResultWriter subclasses, with only one argument in the constructor: pipeline_name.
+
     
     def set_result_forall(
         self, field: str, value: Optional[str]    
