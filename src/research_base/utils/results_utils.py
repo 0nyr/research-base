@@ -9,9 +9,9 @@ from ..results.base_result_writer import BaseResultWriter
 @contextlib.contextmanager
 def time_measure_result(
     message: str, 
-    logger : logging.Logger = None,
-    result_saver: BaseResultWriter | BaseResultsManager = None, 
-    result_column: str = None, 
+    logger : logging.Logger | None = None,
+    result_saver: BaseResultWriter | BaseResultsManager | None = None, 
+    result_column: str | None = None, 
 ):
     """
     Measure the time elapsed since the begining of the context.

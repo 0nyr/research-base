@@ -48,11 +48,11 @@ class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
     def __init__(
             self, 
             app_name: str,
-            pipeline_names_enum: Type[Enum],
-            result_writer: Type[BaseResultWriter],
+            pipeline_names_enum: Type[PipelineNamesEnum],
+            result_writer: Type[ResultWriter],
             load_program_argv : bool = True, 
             debug : bool = False,
-            dotenv_path: str = None,
+            dotenv_path: str | None = None,
             **kwargs
     ):
         """
@@ -107,7 +107,7 @@ class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
 
 
 # ---------------------- results manager ----------------------
-    def __init_results_manager(self, pipeline_names_enum: Type[Enum], result_writer: Type[BaseResultWriter]):
+    def __init_results_manager(self, pipeline_names_enum: Type[PipelineNamesEnum], result_writer: Type[ResultWriter]):
         """
         Init the results manager.
         """
