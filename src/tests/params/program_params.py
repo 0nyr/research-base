@@ -10,7 +10,7 @@ class PipelineParams(Enum):
     PIPELINE2 = "PIPELINE2"
 
 class ResultWriter(BaseResultWriter):
-    def __init__(self, pipeline_name: Enum):
+    def __init__(self, pipeline_name: str):
         super().__init__(
             csv_file_path="test_output/result.csv", 
             more_header=[], 
