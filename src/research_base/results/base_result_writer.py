@@ -29,8 +29,8 @@ class BaseResultWriter(object):
     def __init__(
             self, 
             csv_file_path: str, 
-            more_header: list[str],
-            pipeline_name: str,
+            more_header: list[str] = [],
+            pipeline_name: str = "unnamed-pipeline"
         ):
         self.csv_file_path = csv_file_path
         self.headers = self.BASE_HEADERS + more_header

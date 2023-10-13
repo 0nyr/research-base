@@ -1,17 +1,27 @@
 from datetime import datetime
 import json
 import os
+from enum import Enum
+from typing import Type, TypeVar
 
 # utils constants
 DATETIME_FORMAT = "%Y_%m_%d_%H_%M_%S_%f"
 
 
 def str2bool(string: str) -> bool:
+    """
+    Convert a string to a boolean.
+    """
     return json.loads(string.lower())
 
 
-def str2enum(string: str, enum_type: type):
-    return enum_type[string.upper()]
+T = TypeVar('T', bound=Enum)
+
+def str2enum(s: str, enum_cls: Type[T]) -> T:
+    """
+    Convert a string to an enum member.
+    """
+    return enum_cls[s.upper()]
 
 
 def datetime2str(datetime: datetime):

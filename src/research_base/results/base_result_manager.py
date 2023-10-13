@@ -32,8 +32,8 @@ class BaseResultsManager(Generic[PipelineNamesEnum, ResultWriter]):
         self.result_writer_dict = {}
         for pipeline_name in pipeline_names:
             self.result_writer_dict[pipeline_name] = ResultWriterType(
-                str(pipeline_name),
-            ) # type: ignore # WARN : Only work with ResultWriter subclasses, with only one argument in the constructor: pipeline_name.
+                str(pipeline_name)
+            ) # NOTE: Child classes should call BaseWriter constructor with the other arguments needed
 
     
     def set_result_forall(
