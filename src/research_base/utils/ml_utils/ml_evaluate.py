@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any
+from typing import Any, Dict, cast
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 
@@ -22,6 +22,27 @@ def __get_predicted_classes_from_report(clf_report: dict) -> list:
             classes.append(key)
     # Return the classes list
     return classes
+
+
+"""
+Constants
+---------
+EVALUATE_RESULT_KEYS : list[str]
+    The keys of the results that are saved by the evaluate function.
+"""
+EVALUATE_RESULT_KEYS = [
+    "classification_duration",
+    "precision",
+    "recall", 
+    "accuracy",
+    "f1_score", 
+    "support", 
+    "true_positives", 
+    "true_negatives",
+    "false_positives", 
+    "false_negatives", 
+    "auc"
+]
 
 
 def evaluate(
@@ -59,7 +80,9 @@ def evaluate(
         result_saver.set_result("accuracy", str(accuracy))
 
         # Get the classification report in a dictionary format
-        clf_report = classification_report(test_labels, y_pred, output_dict=True)
+        # NOTE : cast is used to tell mypy that the return type of classification_report is a dict, not a string
+        #       (no runtime effect)
+        clf_report  = cast(Dict[str, Any], classification_report(test_labels, y_pred, output_dict=True))
 
         # print the classification report as a dict, with 4 spaces as indentation
         logger.info(json.dumps(clf_report, indent=4))
