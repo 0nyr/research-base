@@ -1,14 +1,17 @@
 from enum import Enum
-from typing import Type
+from typing import Type, TypeVar
 
-def print_enum_values(enum_class: Type[Enum]) -> None:
+
+TEnum = TypeVar('TEnum', bound=Enum)
+
+def print_enum_values(enum_class: Type[TEnum]) -> None:
     """
     Print the possible values of the PipelineNames.
     """
     print(f"Possible values of {enum_class.__name__}: {', '.join([member.value for member in enum_class])}")   
 
 
-def convert_str_arg_to_enum_member(arg: str, enum_class: Type[Enum]) -> Enum:
+def convert_str_arg_to_enum_member(arg: str, enum_class: Type[TEnum]) -> TEnum:
     """
     Convert a string argument to a member of the given Enum class.
     """
