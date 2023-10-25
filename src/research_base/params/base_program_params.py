@@ -220,7 +220,7 @@ class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
             # Load environment variables from .env file
             dotenv_path = os.path.join(project_base_dir, ".env")
         
-        dotenv.load_dotenv(dotenv_path)
+        dotenv.load_dotenv(dotenv_path, override=True)
 
         # get all class attributes (annotations in Python)
         all_annotations = self.__get_all_class_attribute_annotations()
