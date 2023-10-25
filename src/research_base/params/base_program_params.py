@@ -53,6 +53,7 @@ class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
             load_program_argv : bool = True, 
             debug : bool = False,
             dotenv_path: str | None = None,
+            construct_log : bool = True,
             **kwargs
     ):
         """
@@ -87,8 +88,8 @@ class BaseProgramParams(ABC, Generic[PipelineNamesEnum, ResultWriter]):
 
         self.__load_env(dotenv_path)
         self.__check_all_paths()
-
-        self.__construct_log()
+        if construct_log:
+            self.__construct_log()
 
         self.__init_results_manager(pipeline_names_enum, result_writer)
 
